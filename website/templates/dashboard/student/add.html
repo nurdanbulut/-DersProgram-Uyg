@@ -1,0 +1,35 @@
+{% extends  "/dashboard/layout.html" %}
+{% block title %}Öğrenci Ekle{% endblock %}
+{% block content %}
+	<h1 class="display-1">Öğrenci Ekle</h1>
+    <form method="post">
+        <label for="name" class="form-label">Ad Soyad</label>
+        <input type="text" name="name" class="form-control" minlength="5" maxlength="255" required>
+        <label for="department" class="form-label">Bölüm</label>
+        <select name="department" class="form-select" required>
+            {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }} : {{ department.short_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="grade" class="form-label">Kaçıncı sınıf</label>
+        <input type="number" class="form-control" name="grade" min="1" max="4" value="1" required>
+
+        <label for="password" class="form-label">Şifre</label>
+        <input type="password" name="password" id="password" class="form-control" maxlength="255" minlength="3" required>
+        <br>
+        <label for="is_password_auto" class="form-check-label">Şifre otomatik oluşturulsun</label>
+        <input type="checkbox" name="is_password_auto" id="is_password_auto" class="form-check-inline">
+
+        <br>
+        <button type="submit" class="btn btn-primary float-end">Ekle</button>
+    </form>
+
+    <script>
+        const is_password_auto = document.getElementById("is_password_auto");
+        const password = document.getElementById("password");
+
+        is_password_auto.addEventListener('click', (e)=>{
+            password.disabled = e.target.checked ? true : false;
+        })
+    </script>
+{% endblock %}

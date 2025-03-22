@@ -1,0 +1,28 @@
+{% extends "dashboard/layout.html" %}
+{% block title %}Ders Tipi Ekle{% endblock %}
+{% block content %}
+	<h1 class="display-3">Ders Tipi Ekle</h1>
+    <hr>
+    <form method="post">
+        <label for="name" class="form-label">Ders Adı</label>
+        <input type="text" name="name" class="form-control" maxlength="255" minlength="3" required>
+        <br>
+        <label for="code" class="form-label">Kodu</label>
+        <input type="text" name="code" pattern="[A-Z0-9]+" class="form-control" maxlength="10" minlength="1" required>
+        <p class="form-text">Lütfen büyük harflerle boşluk olmadan ve Türkçe karakterler olmadan giriniz!</p>
+        <br>
+        <label for="teacher" class="form-label">Öğretim Görevlisi</label>
+        <select name="teacher" class="form-select form-select-lg">
+            {% for teacher in teachers %}
+                <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="online" class="form-label">Online Mı?</label>
+        <input type="checkbox" name="online" class="form-check-inline">
+
+        <br>
+        <button type="submit" class="btn btn-primary float-end">Ekle</button>
+    </form>
+
+{% endblock %}

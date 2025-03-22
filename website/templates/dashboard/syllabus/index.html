@@ -1,0 +1,97 @@
+{% extends "dashboard/layout.html" %}
+{% block title %}Yönetici Paneli{% endblock %}
+{% block content %}
+    <h2 class="display-2">Ders Programı Seçenekleri</h2>
+    <div class="accordion my-2" id="deparments_acordion">
+        {% for department in departments %}
+        	  <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ department.short_name }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ department.name }} : {{ department.short_name }}
+                  </button>
+                </h2>
+                <div id="{{ department.short_name }}" class="accordion-collapse collapse" data-bs-parent="#departments_acordion">
+                  <div class="accordion-body">
+                      {% for grade, option  in enumerate(department.is_options_set) %}
+                          <div class="card mb-3">
+                              <div class="card-body">
+                                  <h3>{{ grade + 1 }}. Sınıf</h3>
+                                  {% if option %}
+                                      <ul class="list-group mb-2">
+                                        {% for option in syllabus_options.where(SyllabusOptions.grade == grade + 1, SyllabusOptions.department==department) %}
+                                            {% if option.shareable %}
+                                        	    <li class="list-group-item bg-warning">{{ option.lesson_type.name }} - {{ option.lesson_type.code }} - {{ option.lesson_type.teacher.name }} -
+                                            {% else %}
+                                        	    <li class="list-group-item">{{ option.lesson_type.name }} - {{ option.lesson_type.code }} - {{ option.lesson_type.teacher.name }} -
+                                            {% endif %}
+                                            {% if option.lesson_type.online %}
+                                            	Online
+                                            {% else %}
+                                                Yüzyüze
+                                            {% endif %}
+                                            : {{ option.hpw }} Saat
+                                            </li>
+                                        {% endfor %}
+
+                                      </ul>
+
+                                      <a href="{{ url_for('dashboard.syllabus_options_add', department=department.id, grade=grade + 1) }}" class="btn btn-primary float-end">
+                                        <i class="bi bi-pencil"></i>
+                                      </a>
+                                  {% else %}
+                                      <strong>Ayarlar yapılmadı</strong>
+
+                                      <a href="{{ url_for('dashboard.syllabus_options_add', department=department.id, grade=grade + 1) }}" class="btn btn-primary float-end">
+                                        <i class="bi bi-pencil"></i>
+                                      </a>
+                                  {% endif %}
+                              </div>
+                          </div>
+                      {% endfor %}
+
+                  </div>
+                </div>
+              </div>
+
+        {% endfor %}
+        
+    </div>
+    <p class="p">Ortak olanlar arkaplanı turuncu ile işaretlenmiştir</p>
+
+    <h2 class="display-2">Ders Programları</h2>
+
+            <div class="row justify-content-center">
+            <div class="w-100 p-0">
+                <div class="table-container p-3 bg-white overflow-y-auto w-100">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Oluşturulma Zamanı</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for syllabus in syllabuses  %}
+                                <tr>
+                                    <td>{{ syllabus.id }}</td>
+                                    <td>{{ syllabus.created_at }}</td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.syllabus_view', id=syllabus.id) }}" class="btn btn-warning px-1 py-0">
+                                            <i class="bi bi-eye text-light"></i>
+                                        </a>
+                                        <a href="{{ url_for('dashboard.syllabus_delete', id=syllabus.id) }}" class="btn btn-danger px-1 py-0">
+                                            <i class="bi bi-x-lg text-light"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <a href="{{ url_for('dashboard.syllabus_create') }}" class="btn btn-primary float-end">Yeni Ders Programı Oluştur</a>
+
+{% endblock %}

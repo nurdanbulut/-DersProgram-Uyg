@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %} | Ders Programı</title>
+    {% block head %}
+
+    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons/font/bootstrap-icons.css') }}">
+</head>
+<body data-bs-theme="light">
+    <script src="{{ url_for('static', filename='axios.min.js') }}"></script>
+    {% include "dashboard/navbar.html" %}
+
+    <section class="container-md">
+    {% include 'includes/flash_helpers.html' %}
+    {% block content %}
+
+    {% endblock %}
+        <br><br>
+    </section>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giriş Yap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename="bootstrap/css/bootstrap.css") }}">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container text-center">
+        <h3 class="mb-3">Giriş Yap</h3>
+        {% include "includes/flash_helpers.html" %}
+        <form method="post">
+            <input type="number" class="form-control mb-3" name="id" placeholder="ID numaranız" autofocus>
+            <input type="password" name="password" class="form-control mb-3" id="password">
+            <button class="btn btn-primary w-100">Giriş</button>
+        </form>
+    </div>
+    <script src="{{ url_for("static", filename="bootstrap/js/bootstrap.js") }}"></script>
+</body>
+</html>

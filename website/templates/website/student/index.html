@@ -1,0 +1,38 @@
+{% extends 'website/layout.html' %}
+{% block title %}
+    {{ session['name'] }}
+{% endblock %}
+{% block content %}
+        <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th></th>
+                <th>09:00</th>
+                <th>10:00</th>
+                <th>11:00</th>
+                <th>12:00</th>
+                <th>13:00</th>
+                <th>14:00</th>
+                <th>15:00</th>
+                <th>16:00</th>
+                <th>17:00</th>
+                <th>18:00</th>
+                <th>19:00</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day, lessons in enumerate(table) %}
+                <tr>
+                    <td>{{ get_day(day + 1) }}</td>
+                    {% for lesson in lessons %}
+                        {% if lesson.shared %}
+                            <td class="bg-warning">{{ str(lesson.type) }}</td>
+
+                        {% else %}
+                            <td>{{ str(lesson.type) }}</td>
+                        {% endif %}
+                    {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

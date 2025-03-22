@@ -1,0 +1,124 @@
+{% extends '/dashboard/layout.html' %}
+{% block title %}Ders Ekleme{% endblock %}
+{% block content %}
+	<h2>Ders Ayarı Ekleme</h2>
+    <h2>Bölüm: {{ department.name }}</h2>
+    <h2>Sınıf: {{ grade }}</h2>
+    <h2>Maksimum Ders Saati: {{ department.max_hour }}</h2>
+    <hr>
+    <form method="post">
+        <div id="options_form">
+
+        </div>
+        <button class="btn btn-outline-info btn-lg" id="new_option" type="button">+</button>
+        <button class="btn btn-primary float-end" type="submit">Güncelle</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='flash.js') }}"></script>
+    <script>
+        const max_hour = {{ department.max_hour|tojson }}
+        const lessons = {{ lessons|tojson }}
+
+        let options = {{ options|tojson }} // [lesson, hour, shareable]
+
+        const form = document.getElementById('options_form')
+
+        function deleteOption(index){
+            options.splice(index, 1)
+            renderOptions()
+        }
+
+        function newOption(lessons, index, shareable, hour=1){
+            const div = document.createElement('div')
+            div.className = "card my-2"
+            div.id = `option-${index}`
+
+            const lessons_elements = lessons.map((lesson)=>{
+                const option = document.createElement('option')
+                option.value = lesson.id
+                option.innerText = `${lesson.name} - ${lesson.code} - ${lesson.teacher.name} - ${lesson.online ? "Online" : "Yüzyüze"}`
+                return option.outerHTML
+            })
+
+            div.innerHTML = `
+                    <div class="card-header">${index + 1}. Ders <button onclick="deleteOption(${index})" class="btn btn-danger float-end"><i class="bi bi-x-circle-fill"></i></button></div>
+                    <div class="card-body pl-0">
+                            <label for="lesson-${index}" class="form-label">Ders:</label>
+                            <select name="lesson-${index}" id="lesson-${index}" class="form-select lesson pl-0 mb-1" required>
+                                ${lessons_elements.join('\n')}
+                            </select>
+                            <label for="hour-${index}" class="form-label">Haftalık saat:</label>
+                            <input type="number" name="hour-${index}" id="hour-${index}" class="form-control hour pl-0 mb-1" max="${max_hour}" min="1" value="${hour}" required>
+                            <br>
+                            <input type="checkbox" name="shareable-${index}" id="shareable-${index}" class="form-check-inline" ${shareable ? "checked" : ""}>
+                            <label for="shareable-${index}" class="form-check-label">Ders ortak olarak işlenebilir</label>
+                    </div>
+                `
+
+            return div
+        }
+
+        function renderOptions(){
+            form.innerHTML = "";
+            options.forEach((option, index) =>{
+                form.appendChild(newOption(lessons, index, option[2], option[1]))
+                document.getElementById(`lesson-${index}`).value = option[0]
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            if(options.length === 0){options.push([lessons[0].id, 1])}
+            renderOptions()
+
+            document.getElementById('new_option').addEventListener('click', ()=>{
+                if(options.length < lessons.length) {
+                    options.push([lessons[0].id, 1])
+
+                    renderOptions()
+                }else{
+                    new FlashAlert("Lütfen kayıtlı olan ders tipinden fazla ders eklemeye çalışmayın!", 'danger').show_alert(10000)
+                }
+
+
+            })
+
+            form.addEventListener('input', (e)=>{
+                if(e.target.id.includes('lesson')){
+                    const index = Number(e.target.id.replace('lesson-', ''))
+                    options[index][0] = e.target.value
+                }else if(e.target.id.includes('hour')){
+                    const index = Number(e.target.id.replace('hour-', ''))
+                    options[index][1] = e.target.value
+                }
+            })
+
+            document.querySelector('form').addEventListener('submit', (e)=>{
+                const lesson_elements = document.querySelectorAll(".lesson");
+
+                let id_numbers = []
+                lesson_elements.forEach((element)=>{
+                    if(id_numbers.includes(Number(element.value))){
+                        new FlashAlert("Aynı dersten iki adet seçtiniz", "danger").show_alert(10000)
+                        e.preventDefault()
+                        return false;
+                    }else{
+                        id_numbers.push(Number(element.value))
+                    }
+                })
+
+                const hour_elements = Array.from(document.querySelectorAll(".hour"));
+
+                let sum = 0
+                hour_elements.forEach((element)=>{
+                    sum += Number(element.value)
+                })
+
+                if(sum > max_hour){
+                    new FlashAlert("Lütfen maksimum ders saatinden fazla ders girmeyin!", "danger").show_alert(10000)
+                    e.preventDefault()
+                    return false;
+                }
+            })
+        })
+    </script>
+{% endblock %}
